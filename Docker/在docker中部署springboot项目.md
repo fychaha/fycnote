@@ -40,7 +40,7 @@
 4. 准备好后创建镜像
 
    ```
-   docker build -t fycapp
+   docker build -t fycapp .
    ```
 
 5. 创建容器，并运行
