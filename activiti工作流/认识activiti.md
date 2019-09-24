@@ -40,4 +40,41 @@
    select * from `act_hi_attachment`;#附件表
    ```
 
+3. 部署流程定义的两种方法
+   读取单个流程定义文件
+
+   ```java
+     @Test
+       public void test() {
+           //得到流程引擎对象，这里是拿到默认的流程引擎
+           ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+           //创建流程部署对象
+           DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+   
+           //读取单个指定的流程定义文件
+           deploymentBuilder.addClasspathResource("/process/test.bpmn");
+           deploymentBuilder.addClasspathResource("/process/test.png");
+           Deployment deployment = deploymentBuilder.deploy();//部署流程
+       }
+   ```
+
+   使用zip部署,将test.bpmn和test.png放到同一个zip压缩包中。(建议使用这种方法)
+
+   ```java
+   @Test
+       public void test() {
+           //使用默认配置文件创建流程引擎
+           ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+           //创建流程部署对象
+           DeploymentBuilder deploymentBuilder = processEngine.getRepositoryService().createDeployment();
+   
+           //读取ZIP压缩文件
+           //读取资源文件
+           ZipInputStream zipInputStream = new ZipInputStream(this.getClass().getClassLoader().getResourceAsStream("/process/process.zip"));
+           deploymentBuilder.addZipInputStream(zipInputStream);
+           deploymentBuilder.name("请假流程部署");//设置流程定义名称
+           Deployment deployment1 = deploymentBuilder.deploy();//部署流程
+       }
+   ```
+
    
