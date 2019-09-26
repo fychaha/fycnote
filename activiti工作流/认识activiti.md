@@ -77,4 +77,119 @@
        }
    ```
 
+4. 流程变量
+
+   ```java
+   
+   /**
+   	 * 设置流程变量数据
+   	 */
+   	@Test
+   	public void setVariableValues(){
+   		TaskService taskService=processEngine.getTaskService();//获取任务
+   		String taskId="";//任务id知道是哪个人物，设置流程变量.
+   		//下面设置任务的内容，比如请假流程
+   		taskService.setVariable(taskId, "days", 2);//请假天数
+   		taskService.setVariable(taskId, "date", new Date());//请假日期
+   		taskService.setVariable(taskId, "reason", "发烧");//请假原因
+   		
+   		//下面我们再测试一个额外的知识点，就是流程传输变量，这里我们再新建一个student对象，对象有id 和name两个属性,还有就是序列化传输
+   		Student student=new Student();
+   		student.setId(1);
+   		student.setName("zhangsan");
+   		taskService.setVariable(taskId, "student",student);//序列化对象
+   		taskService.complete(task.getId(),variables);//完成任务
+   		
+   	}
+   ```
+
+   使用map一次设置多个流程变量
+
+   ```java
+   @Test
+   	public void setVariableValue1(){
+   		TaskService taskService=processEngine.getTaskService();//获取任务
+   		String taskId="25004";//更加任务id知道是哪个人物，设置流程变量。可以更加查看任务方法查看任务的id，可以到数据库直接看
+   		//下面设置任务的内容，比如请假流程，任务的第一节点也就是申请人要写请假的原因
+   //		taskService.setVariable(taskId, "days", 2);//请假天数
+   //		taskService.setVariable(taskId, "date", new Date());//请假日期
+   //		taskService.setVariable(taskId, "reason", "faShao");//请假原因
+   		
+   		//下面我们再测试一个额外的知识点，就是流程传输变量，这里我们再新建一个student对象，对象有id 和name两个属性,还有就是序列化传输
+   		Student student2=new Student();
+   		student2.setId(1);
+   		student2.setName("zhangsan");
+   		taskService.setVariable(taskId, "student",student2);//序列化对象
+   	//创建流程变量map
+   		Map<String, Object> variables=new HashMap<String,Object>();
+   		variables.put("days", 3);
+   		variables.put("date",new Date());
+   		variables.put("reason", "faShao2");
+   		variables.put("student", student2);
+   		taskService.setVariables(taskId, variables);
+   		taskService.complete(task.getId(),variables);
+   	}
+   ```
+
+5. 排他网关
+   即单线流程
+
+6. 并行网关
+
+   ​    注意：此时整个流程有两个执行实例，这两个实例又属于整个流程实例，所以execution表里有三条数据（父流程实例，与两个执行实例）
+
+   
+
+   如图：
+
+   ![1569413630534](C:\Users\admi\AppData\Roaming\Typora\typora-user-images\1569413630534.png)
+
+   
+
+7. 启动流程
+
+   ```java
+   public void startProcess(){
+       RuntimeService runtimeService =processEngine.getRuntimeService();
+       runtimeService.startProcessInstanceById("myProcess:1:4", bussinessKey);//用流程id启动
+   }
+   ```
+
+8. 接收任务（receiveTask,等待活动）
+
+   说明：与用户任务（UserTask）不同的是，接收任务（ReceiveTask）创建后，会进入一个等待状态，一般指机器自动完成，但需要耗费一定时间的工作，当完成工作后后，向后推移流程。
+
+   与UserTask不同的还有，在task表中是没有数据的
+
+   //部署省略。。。。。
+
+   启动流程
+
+   ```java
+   //3.查询执行对象表,使用流程实例ID和当前活动的名称（receivetask1）
+   		String processInstanceId = pi.getId();//得到流程实例ID
+   				//拿到流程实例
+   		Execution execution1 = processEngine.getRuntimeService()
+   				.createExecutionQuery()
+   				.processInstanceId(processInstanceId)//流程实例ID
+   				.activityId("receivetask1")//当前活动的id
+               String value="流程变量";//这个数据在数据库中查找，是个耗时操作。
+           runtimeService.setVariable(execution1.getId(),"流程变量",value)
+   ```
+
+   之后向后执行一步,如果流程处于等待状态，使流程继续进行
+
+   ````java
+   runtimeService.signal(execution1.getId())
+   ````
+
+   此时活动节点到了第二个任务,执行第二个任务
+
+   直到该任务完成后再向后执行一步
+
+   ````java
+   //第二个任务代码略
+   runtimeService.signal(execution1.getId());
+   ````
+
    

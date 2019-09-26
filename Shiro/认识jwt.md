@@ -1,4 +1,4 @@
-## JWT 的组成
+##   JWT 的组成
 
 一个 JWT 实际上就是一个字符串，它由三部分组成：头部、荷载 与 签名。
 
@@ -79,4 +79,68 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcm9tX3VzZXIiOiJCIiwidGFyZ2V0X3VzZXIiOiJ
 http://.../xxx.do?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcm9tX3VzZXIiOiJCIiwidGFyZ2V0X3VzZXIiOiJBIn0.rSWamyAYwuHCo7IFAgd1oRpSP7nzL7BF5t7ItqpKViM
 ```
 
-## 
+
+
+添加过滤器
+
+```java
+// 添加jwt过滤器
+        Map<String, Filter> filterMap = new HashMap<>();
+        filterMap.put("anon", new AnonymousFilter());
+        filterMap.put("jwt", new JwtFilter());
+        shiroFilter.setFilters(filterMap);
+```
+
+设置拦截器
+
+```java
+   // 拦截器
+        Map<String, String> filterRuleMap = new LinkedHashMap<>();
+        filterRuleMap.put("/login", "anon");
+        filterRuleMap.put("/**", "jwt");
+        shiroFilter.setFilterChainDefinitionMap(filterRuleMap);
+```
+
+
+
+JwtFilter 编写
+
+```java
+public class JwtFilter extends AccessControlFilter {
+
+            /**
+             * @return 返回true时，Shiro 会放过请求，允许访问URL。此时不考虑onAccessDenied方法。
+             *         返回false时，Shiro 才会根据 onAccessDenied 的返回值考虑是否放过请求。
+             */
+            @Override
+            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+                log.debug("isAccessAllowed 方法被调用");
+                return false;
+            }
+            @Override
+            protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
+                log.debug("onAccessDenied 方法被调用");
+                HttpServletRequest request = (HttpServletRequest) servletRequest;
+                String jwt = request.getHeader("Authorization");
+                log.info("请求的 Header 中藏有 jwtToken {}", jwt);
+                JwtToken jwtToken = new JwtToken(jwt);
+                try {
+                    // 委托 realm 进行登录认证
+                    // 兜兜转转，最后调用的就是 JwtRealm 中的 doGetAuthenticationInfo 方法
+                    getSubject(servletRequest, servletResponse).login(jwtToken);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    onLoginFail(servletResponse);
+                    return false;
+                }
+                return true;
+            }
+            // 登录失败时默认返回 401 状态码
+            private void onLoginFail(ServletResponse response) throws IOException {
+                HttpServletResponse httpResponse = (HttpServletResponse) response;
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpResponse.getWriter().write("login error");
+    }
+}
+```
+
