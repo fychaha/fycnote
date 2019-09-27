@@ -192,4 +192,52 @@
    runtimeService.signal(execution1.getId());
    ````
 
+9. 组任务
+
    
+
+   任务拾取（指定该任务的办理人），实际开发中由上级执行，指派办理，为他们拾取任务。被指派者去执行任务。
+
+   ```java
+   @Test
+   public void claim(){
+       String taskId="任务id";
+       String person="办理人";
+        taskService.claim(taskId,person);
+   }
+   ```
+
+   任务拾取后，在indentity表中，该办理人的type属性会从"candidate"()被修改为"assignee"
+
+   
+
+   任务回退(重新指定办理人)
+
+   ```java
+   @Test
+   public void claim(){
+       String taskId="任务id";
+       String person="办理人";
+        taskService.setAssidnee(taskID,null);//把之前在task表里设定的办理人清空。
+       //之后再重新拾取
+   }
+   ```
+
+10. 用户与用户组
+    创建用户与用户组
+
+    ```java
+    //newGroup方法创建Group实例
+    Group group = identityService.newGroup("1");
+    group.setName("经理组");
+    group.setType("manager");
+    // 自定义方法保存用户组
+    public void createGroup(IdentityService identityService, String id,String name, String type) {
+      Group group = identityService.newGroup(id);
+      group.setName(name);
+      group.setType(type);
+      identityService.saveGroup(group);}
+    createGroup(identityService, "1", "经理组", "typeManager");
+    ```
+
+    
