@@ -173,3 +173,14 @@ public class JwtUtil {
 > Cookie 还是 local storage、session storage ？这是客户端（前端开发工程师、IOS/Andriod 客户端开发工程师）考虑的事情。
 
 3. 前端向后端传递 JWT token 是，可以放在 http header 里，也可以拼在 url 里，也可以放 cookie 里。
+
+
+
+配置多个realm
+
+1. 创建Modu
+
+```
+
+```
+
