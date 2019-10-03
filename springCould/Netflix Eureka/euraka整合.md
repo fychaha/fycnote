@@ -41,7 +41,7 @@
 3. 配置文件
    在默认设置下，该服务注册中心也会将自己作为客户端来尝试注册它自己，所以我们需要禁用它的客户端注册行为，在`application.properties`添加以下配置：
 
-   ```xml
+   ```properties
    spring.application.name=spring-cloud-eureka
    
    server.port=8000
@@ -57,7 +57,7 @@
 
 2. 配置文件
 
-   ```xml
+   ```properties
    spring.application.name=spring-cloud-producer <!--表明这个项目是服务的生产者 -->
    server.port=9000
    eureka.client.serviceUrl.defaultZone=http://localhost:8000/eureka/
@@ -101,7 +101,7 @@
 2. 配置文件
 
    ```xml
-   sspring.application.name=spring-cloud-consumer  
+   spring.application.name=spring-cloud-consumer  
    server.port=9001
    eureka.client.serviceUrl.defaultZone=http://localhost:8000/eureka/
    ```
@@ -127,7 +127,7 @@
 4. feign调用实现
 
    ```java
-   @FeignClient(name= "spring-cloud-producer")  //name:远程服务名，及spring.application.name配置的名称
+   @FeignClient(name= "spring-cloud-producer")  //name:远程服务名，及spring.application.name配置的名称,就是指定要去哪个生产者去取服务
    public interface HelloRemote {
        @RequestMapping(value = "/hello")
        public String hello(@RequestParam(value = "name") String name);
