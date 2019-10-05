@@ -2,7 +2,7 @@
 
 1. 引入依赖
 
-   ```
+   ```xml
    <dependency>
            <groupId>org.springframework.boot</groupId>
            <artifactId>spring-boot-starter-amqp</artifactId>
@@ -11,7 +11,7 @@
 
 2. application.yml 中设置相关属性
 
-   ```yml
+   ```properties
    spring.rabbitmq.host=192.168.0.86
    spring.rabbitmq.port=5672
    spring.rabbitmq.username=admin
@@ -20,7 +20,7 @@
 
 3. 队列queue配置
 
-   ```
+   ```java
    @Configuration
    public class RabbitConfig {
        @Bean
@@ -32,7 +32,7 @@
 
    发送者
 
-   ```
+   ```java
    @Component
    public class HelloSender {
    // rabbitTemplate是springboot 提供的默认实现
@@ -48,7 +48,7 @@
 
    接收者
 
-   ```
+   ```java
    @Component
    @RabbitListener(queues = "hello")
    public class HelloReceiver {
@@ -63,7 +63,7 @@
 
    测试
 
-   ```
+   ```java
    @RunWith(SpringRunner.class)
    @SpringBootTest
    public class RabbitMqHelloTest {
