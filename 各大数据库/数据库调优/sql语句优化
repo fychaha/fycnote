@@ -1,0 +1,29 @@
+# sql语句优化
+
+##### 什么叫慢查询？
+
+mysql默认有一个规定：只要10秒钟，没有按照规定的时间返回结果，都属于慢查询。默认不会有日志记录，需要自己去配置慢查询日志记录。他会把慢查询sql语句，都会存放在日志文件中。
+
+修改慢查询时间
+
+```sql
+show variable like  'long_query_time' --查看慢查询规定时间,默认10秒。
+
+set long_query_time = 1; --修改慢查询时间为1秒，但是重启mysql后，会重置成my.ini中的值。
+
+```
+
+
+
+### show status
+
+使用show status使用show status查看MySQL服务器状态信息
+
+常用命令
+
+| --mysql数据库启动了多少时间show status like 'uptime';        |
+| ------------------------------------------------------------ |
+| show  stauts like 'com_select'  show stauts like 'com_insert' ...类推 update  delete（显示数据库的查询，更新，添加，删除的次数） |
+| show [session\|global] status like .... 如果你不写  [session\|global] 默认是session 会话，指取出当前窗口的执行，如果你想看所有(从mysql 启动到现在，则应该 global) |
+| //显示到mysql数据库的连接数show status like  'connections '; |
+| //显示慢查询次数show status like 'slow_queries';             |
