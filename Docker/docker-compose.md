@@ -48,7 +48,7 @@ ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","app.jar"]
 version: '2' # 表示该 Docker-Compose 文件使用的是 Version 2 file
 services:
   docker-demo:  # 指定服务名称
-    build: .  # 指定 Dockerfile 所在路径
+    build: . # 指定 Dockerfile 所在路径
     ports:    # 指定端口映射
       - "9000:8761"
 ```
