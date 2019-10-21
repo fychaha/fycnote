@@ -1,0 +1,113 @@
+## 创建线程的几种方法
+
+- 继承Thread类，覆写run方法，调用start方法启动该线程。
+
+- 实现runvable接口，覆写run方法，再创建Thread类，过偶早方法传入这个接口实现类，调用start方法启动该线程。
+
+  
+
+- 通过Callable和Future创建线程。
+
+  （1）创建Callable接口的实现类，并实现call()方法，该call()方法将作为线程执行体，并且有返回值。
+
+  （2）创建Callable实现类的实例，使用FutureTask类来包装Callable对象，该FutureTask对象封装了该Callable对象的call()方法的返回值。（FutureTask是一个包装器，它通过接受Callable来创建，它同时实现了Future和Runnable接口。）
+
+  （3）使用FutureTask对象作为Thread对象的target创建并启动新线程。
+
+  （4）调用FutureTask对象的get()方法来获得子线程执行结束后的返回值
+
+  实现类
+
+  `````java
+  public class Demo implements Callable<Integer> {
+  
+      @Override
+      public Integer call() throws Exception {
+          int i=0;
+          i++;
+          System.out.println(i);
+          return i;
+  
+      }
+  }
+  `````
+
+  FutureTask类传入Callable实现类对象
+
+  ````java
+  FutureTask<Integer> futureTask = new FutureTask<>(new Demo());
+  ````
+
+  创建Thread类传入FutureTask类的对象
+
+  ```java
+   Thread thread = new Thread(futureTask);
+  	thread.start();
+  ```
+
+
+
+## 二、创建线程的三种方式的对比
+
+1、采用实现Runnable、Callable接口的方式创建多线程时，
+
+优势是：
+
+线程类只是实现了Runnable接口或Callable接口，还可以继承其他类。
+
+在这种方式下，多个线程可以共享同一个target对象，所以非常适合多个相同线程来处理同一份资源的情况，从而可以将CPU、代码和数据分开，形成清晰的模型，较好地体现了面向对象的思想。
+
+劣势是：
+
+编程稍微复杂，如果要访问当前线程，则必须使用Thread.currentThread()方法。
+
+2、使用继承Thread类的方式创建多线程时，
+
+优势是：
+
+编写简单，如果需要访问当前线程，则无需使用Thread.currentThread()方法，直接使用this即可获得当前线程。
+
+劣势是：
+
+线程类已经继承了Thread类，所以不能再继承其他父类。
+
+3、Runnable和Callable的区别
+
+(1) Callable规定（重写）的方法是call()，Runnable规定（重写）的方法是run()。
+
+(2) Callable的任务执行后可返回值，而Runnable的任务是不能返回值的。
+
+(3) call方法可以抛出异常，run方法不可以。
+
+(4) 运行Callable任务可以拿到一个Future对象，表示异步计算的结果。它提供了检查计算是否完成的方法，以等待计算的完成，并检索计算的结果。通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果。
+
+### 线程池原理及其实现
+
+优点：
+
+- 降低资源消耗
+- 提高响应速度，提高程序执行效率。
+- 使得线程更有可管理性
+
+线程池的处理流程：
+
+1. 判断核心线程池时是已满，如果还没有满，就创建线程，否则就下一步。
+2. 判断工作队列是否已满，如果还没满，则将新任务存储到工作队列中，如果满了就下一步。
+3. 判断线程池是否已满，，如果没满，则创建新线程执行任务；如果满了，则按照饱和策略处理任务。
+
+线程池的使用：
+
+- 线程池的创建
+
+- 向线程池中提交任务
+
+  execute();用于提交不需要返回值的任务
+
+  submit();用于需要返回值的任务，返回一个Future类型的对象。get()方法会阻塞当前线程直到任务完成
+
+- 关闭线程池
+
+  原理：遍历线程池中的工作线程，逐个调用当前线程的interrupt()方法中断线程。
+
+- 合理配置线程池，比如最大同时连接数等，最大限度地对性能进行调优。
+
