@@ -12,7 +12,7 @@
 
 2. 添加配置
 
-   ```
+   ```properties
    spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
    spring.datasource.url=jdbc:mysql://localhost:3306/activiti
        ?useUnicode=true&
@@ -115,7 +115,7 @@
 
 2. 添加配置
 
-   ````yml
+   ````properties
    spring.activiti.database-schema-update=true
    spring.activiti.process-definition-location-prefix=classpath:process/*.bpmn
    # 这里还是记得注意最后面添加url时添加的语句

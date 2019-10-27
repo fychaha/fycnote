@@ -2,7 +2,7 @@
 
 - 继承Thread类，覆写run方法，调用start方法启动该线程。
 
-- 实现runvable接口，覆写run方法，再创建Thread类，过偶早方法传入这个接口实现类，调用start方法启动该线程。
+- 实现runnable接口，覆写run方法，再创建Thread类，过偶早方法传入这个接口实现类，调用start方法启动该线程。
 
   
 
