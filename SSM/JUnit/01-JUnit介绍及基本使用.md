@@ -6,7 +6,7 @@ Junit 是 java 领域占有率非常高的一个单元测试框架，已经成�
 
 1. 在 eclipse 中创建 1 个 source folder 命名为 test（使用 Maven 后已要求创建）
 2. 测试类所在的包要求和被测试类的包一致
-3. 测试类要使 Tes 作为开头或结，如 UserServiceTest
+3. 测试类要使 Test 作为开头或结，如 UserServiceTest
 4. 测试类的每个方法，都必须是可以独立执行的，不存在顺序或依赖
 
 ```java
